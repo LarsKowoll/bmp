@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include "general.h"
 
+#pragma pack(push,1)
 typedef struct tagBITMAPFILEHEADER {
  WORD bfType;
  DWORD bfSize;
@@ -16,7 +17,9 @@ typedef struct tagBITMAPFILEHEADER {
  WORD bfReserved2;
  DWORD bfOffBits;
 } BITMAPFILEHEADER, *PBITMAPFILEHEADER;
+#pragma pack(pop)
 
+#pragma pack(push,1)
 typedef struct tagBITMAPINFOHEADER{
  DWORD biSize;
  LONG biWidth;
@@ -30,6 +33,7 @@ typedef struct tagBITMAPINFOHEADER{
  DWORD biClrUsed;
  DWORD biClrImportant;
 } BITMAPINFOHEADER, *PBITMAPINFOHEADER;
+#pragma pack(pop)
 
 //8 Bit
 typedef struct tagRGBQUAD {
@@ -46,22 +50,35 @@ typedef struct tagRGBTRIPLE {
  unsigned char rgbtRed;
 } RGBTRIPLE;
 
-int readFile(char* path){
+
+
+int readFile(){
     // Dateizeiger erstellen
-    FILE * fp; 
+    FILE *file; 
     // Datei oeffnen
-    fp = fopen(path, "rb");
-    
-    if(fp == NULL){
+    file = fopen("22x14_8_bit_komprimiert_mit_padding_bytes_sehr_kleines_testbild.bmp", "rb");
+    if(file == NULL){
+        fclose(file);
         return -1; //Falscher Dateipfad
-    }   
+    }
+
+    
     //read BITMAPFILEHEADER
-    BITMAPFILEHEADER fileHeader;
-    if (fileHeader.bfType != 0x424D){
+    BITMAPFILEHEADER bitmapFileHeader;
+    fread(&bitmapFileHeader, sizeof(BITMAPFILEHEADER), 1, file);
+    if (bitmapFileHeader.bfType != 0x4d42){
+        fclose(file);
         return -1; //Falscher Datentyp
     }
     
-    
+    // Ausgabe zum Testen
+    printf("bfType: %hX\n", bitmapFileHeader.bfType);
+    printf("bfSize: %d\n", bitmapFileHeader.bfSize);
+    printf("bfReserved1: %hX\n", bitmapFileHeader.bfReserved1);
+    printf("bfReserved2: %hX\n", bitmapFileHeader.bfReserved2);
+    printf("bfOffBits: %lX\n", bitmapFileHeader.bfOffBits);
+        
+    return 0;
     
     
 }

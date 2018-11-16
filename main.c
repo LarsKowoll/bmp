@@ -18,6 +18,7 @@
  * 
  */
 int main(int argc, char** argv) {
+    int a = readFile();
 
     return (EXIT_SUCCESS);
 }
